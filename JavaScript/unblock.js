@@ -1,3 +1,5 @@
+import unbinary from "./unbinary.js";
+
 function unblock(ipt="",key=""){
   ipt = unbinary(ipt);
   ipt = ipt.split("").reverse();
