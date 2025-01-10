@@ -1,7 +1,9 @@
-import {binary} from "./binary.js";
+import {binary,binary4} from "./binary.js"; // binary 8-bit | binary4 4-bit
+import {hex16} from "./hex16.js";
 import {swappos} from "./swappos.js";
 
 function block(ipt="",key=""){
+  ipt = binary4(ipt);
   key = key.split("").map(v=>{
     return String.fromCharCode(v.charCodeAt(0)+100);
   }).join("");
@@ -17,7 +19,7 @@ function block(ipt="",key=""){
   let result = ipt.split("").map(v=>{
     return String.fromCharCode(v.charCodeAt(0) + 99);
   });
-  return binary(result.reverse().join(""));
+  return hex16(result.reverse().join(""));
 }
 
 export {block};
