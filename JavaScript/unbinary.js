@@ -3,3 +3,4 @@ function unbinary(ipt=""){
     return String.fromCharCode(parseInt(v,2));
   }).join("");
 }
+export unbinary;
