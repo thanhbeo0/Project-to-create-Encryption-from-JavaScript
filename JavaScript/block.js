@@ -1,3 +1,6 @@
+import binary from "./binary.js";
+import swappos from "./swappos.js";
+
 function block(ipt="",key=""){
   key = key.split("").map(v=>{
     return String.fromCharCode(v.charCodeAt(0)+100);
