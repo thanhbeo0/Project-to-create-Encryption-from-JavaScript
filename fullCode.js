@@ -1,13 +1,13 @@
-function ranpos(ipt=""){
-  if(ipt.length > 1){
-    let pos1,pos2;
-    do{
-      pos1 = Math.floor(Math.random() * ipt.length);
-      pos2 = Math.floor(Math.random() * ipt.length);
-    }while(pos1 === pos2);
-    return [pos1,pos2];
+function swappos(ipt=""){
+  if(ipt.length < 1){
+    return 1;
   }
-  return [0,0];
+  let pos=Array.from({length: ipt.length}, (_,i)=>i);
+  for(let i=pos.length-1;i>0;i--){
+    let j = Math.floor(Math.random() * (i+1));
+    [pos[i], pos[j]] = [pos[j], pos[i]];
+  }
+  return pos;
 }
 
 function binary(ipt=""){
@@ -22,26 +22,26 @@ function unbinary(ipt=""){
   }).join("");
 }
 
-function block(ipt=""){
-  let pos = ranpos(ipt);
-  let arr = ipt.split("");
-  let temp = arr[pos[0]];
-  arr[pos[0]] = arr[pos[1]];
-  arr[pos[1]] = temp;
-  
-  arr.push(pos[0],pos[1]);
-  ipt = arr.join("");
-  
+function block(ipt="",key=""){
+  key = key.split("").map(v=>{
+    return String.fromCharCode(v.charCodeAt(0)+100);
+  }).join("");
+  let pos = swappos(ipt);
+  ipt=ipt.split("");
+  for(let i=0;i<ipt.length;i++){
+    [ipt[i],ipt[pos[i]]] = [ipt[pos[i]],ipt[i]];
+  }
+  ipt.unshift(key);
+  ipt.push(JSON.stringify(pos)); // lưu trữ các pos để các thể dùng để giải mã
+  ipt = ipt.join("");
   ipt = btoa(unescape(encodeURIComponent(ipt)));
   let result = ipt.split("").map(v=>{
-    let ascii = v.charCodeAt(0);
-    v = ascii + 99;
-    return String.fromCharCode(v);
+    return String.fromCharCode(v.charCodeAt(0) + 99);
   });
   return binary(result.reverse().join(""));
 }
 
-function unblock(ipt=""){
+function unblock(ipt="",key=""){
   ipt = unbinary(ipt);
   ipt = ipt.split("").reverse();
   let result = ipt.map(v=>{
@@ -50,13 +50,26 @@ function unblock(ipt=""){
     return String.fromCharCode(char);
   });
   result = decodeURIComponent(escape(atob(result.join(""))));
-  result = result.split("");
+  let index = result.lastIndexOf("[");
+  let pos = JSON.parse(result.slice(index));
+  let lengthkey = key.length;
+  let keyl = result.slice(0,lengthkey);
+  let data = result.slice(lengthkey,index);
+  let keyx = keyl.split("").map((v) => {
+    return String.fromCharCode(v.charCodeAt(0) - 100);
+  }).join("");
+  if(keyx !== key){
+    return data;
+  }
+  let original = [...data];
+  for(let i=pos.length-1;i>=0;i--){
+    [original[i],original[pos[i]]] = [original[pos[i]],original[i]];
+  }
   
-  let pos2 = result.pop();
-  let pos1 = result.pop();
-  let temp = result[pos2];
-  result[pos2] = result[pos1];
-  result[pos1] = temp;
-  
-  return result.join("");
+  return original.join("");
 }
+self.block = block;
+self.unblock = unblock;
+self.binary = binary;
+self.unbinary = unbinary;
+self.swappos = swappos;
