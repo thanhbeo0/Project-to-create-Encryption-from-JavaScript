@@ -1,7 +1,8 @@
 import {unbinary} from "./unbinary.js";
+import {unhex16} from "./unhex16.js";
 
 function unblock(ipt="",key=""){
-  ipt = unbinary(ipt);
+  ipt = unhex16(ipt);
   ipt = ipt.split("").reverse();
   let result = ipt.map(v=>{
     let char = v.charCodeAt(0);
@@ -25,7 +26,7 @@ function unblock(ipt="",key=""){
     [original[i],original[pos[i]]] = [original[pos[i]],original[i]];
   }
   
-  return original.join("");
+  return unbinary(original.join(""));
 }
 
 export {unblock};
