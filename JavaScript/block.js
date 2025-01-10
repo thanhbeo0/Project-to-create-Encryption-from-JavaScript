@@ -16,3 +16,4 @@ function block(ipt="",key=""){
   });
   return binary(result.reverse().join(""));
 }
+export block;
